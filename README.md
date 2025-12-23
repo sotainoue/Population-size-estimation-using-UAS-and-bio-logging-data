@@ -131,10 +131,17 @@ which may require several hours depending on hardware.
 
 For quick testing and code verification, reduced iterations are specified in `main.R`.
 
+### GPU and CUDA notes
 
+Object detection was performed using PyTorch and YOLOv8.
+The original analyses were run with PyTorch built against CUDA 11.8
+on NVIDIA GPUs.
 
+GPU acceleration is optional. If CUDA is not available, the code
+automatically falls back to CPU execution, although inference will be slower.
 
+We recommend using:
+- Python 3.10
+- PyTorch (CUDA 11.8 build)
+- NVIDIA driver ≥ 520
 
-
-
- the manuscript "Integration of UAS-based spatial surveys and bio-logging tracking enhances precision in population size estimation"
