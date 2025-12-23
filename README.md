@@ -163,3 +163,16 @@ Restart Jupyter and select Python (counting_gulls) as the kernel.
 	•	CPU-only execution is also possible but slower.
 	•	All object detection results in the manuscript were generated using this environment.
 
+## Note on orthomosaic batch prediction (not runnable in the shared repository)
+
+The script section **"Batch prediction for orthomosaics"** requires access to the original orthomosaic GeoTIFF files.
+These orthomosaics are **not included** in this repository due to data size and sensitivity constraints.
+
+Therefore, this part is **disabled by default** (or will be skipped) in the shared/public version.
+
+To run it locally (only for authorized users), you must:
+1. Obtain the orthomosaic files separately.
+2. Set `ORTHO_GLOB` to the local path(s) of the orthomosaic folders.
+3. (If applicable) enable execution by setting an environment variable, e.g.:
+   ```bash
+   export RUN_PRIVATE_ORTHO=1
