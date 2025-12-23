@@ -131,17 +131,35 @@ which may require several hours depending on hardware.
 
 For quick testing and code verification, reduced iterations are specified in `main.R`.
 
-### GPU and CUDA notes
 
-Object detection was performed using PyTorch and YOLOv8.
-The original analyses were run with PyTorch built against CUDA 11.8
-on NVIDIA GPUs.
 
-GPU acceleration is optional. If CUDA is not available, the code
-automatically falls back to CPU execution, although inference will be slower.
 
-We recommend using:
-- Python 3.10
-- PyTorch (CUDA 11.8 build)
-- NVIDIA driver ≥ 520
+
+# Python environment for object detection (YOLOv8 + SAHI)
+
+The object detection pipeline requires a dedicated Python environment
+due to strong dependencies on CUDA, PyTorch, OpenCV, and NumPy.
+
+## 1. Create the conda environment
+
+```bash
+conda env create -f object_detection/environment.yml
+conda activate counting_gulls
+```
+
+## 2. Register the environment as a Jupyter kernel
+
+```bash
+pip install ipykernel
+python -m ipykernel install --user \
+  --name counting_gulls \
+  --display-name "Python (counting_gulls)"
+```
+Restart Jupyter and select Python (counting_gulls) as the kernel.
+
+## 3. Notes on reproducibility
+
+	•	GPU acceleration is supported if a compatible CUDA driver is available.
+	•	CPU-only execution is also possible but slower.
+	•	All object detection results in the manuscript were generated using this environment.
 
