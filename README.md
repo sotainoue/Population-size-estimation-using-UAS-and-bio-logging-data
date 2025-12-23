@@ -42,11 +42,11 @@ This repository contains the data and code used to reproduce the analyses and fi
 │   └── ssmp.stan
 │
 ├── object_detection/
-│   ├── best.pt
-│   ├── environment.yml
-│   ├── example.png
-│   ├── training_data/
-│   └── training.ipynb
+│   ├── best.pt # trained weight 
+│   ├── environment.yml # environment config
+│   ├── example.png # example of orthomosaic
+│   ├── training_data/ # training data
+│   └── training.ipynb # jupyter notebook for training, prediction, and batch prediction
 │
 ├── counting_gulls-5FBE.Rproj
 └── README.md
