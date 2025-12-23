@@ -1,0 +1,15 @@
+name: counting_gulls
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - torch
+      - torchvision
+      - ultralytics
+      - sahi
+      - opencv-python
+      - pandas
+      - numpy
+      - matplotlib
