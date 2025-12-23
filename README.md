@@ -2,55 +2,55 @@
 
 This repository contains the data and code used to reproduce the analyses and figures in the manuscript:
 
-> **"Integration of UAS-based spatial surveys and bio-logging tracking enhances precision in population size estimation"**
+> **Integration of UAS-based spatial surveys and bio-logging tracking enhances precision in population size estimation**
 
 ---
 
 ## Repository structure
 
 ```text
-
 .
 ├── data/
 │   ├── raw/              # Raw data (not publicly available)
 │   └── derived/          # Processed data used for analyses (shared)
-│       ├── logging_data.csv
-│       ├── n_image.csv
-│       ├── test_data.csv
-│       └── uas_counts.csv
+│       ├── logging_data.csv　# individual tracking data
+│       ├── n_image.csv # number of images to create each orthomosaic
+│       ├── test_data.csv # result of validation in object detection
+│       └── uas_counts.csv # prediction for orthomosaic
 │
 ├── code/
-│   ├── clean_logging_data.R #cleaning raw data of biologging
-│   ├── clean_uas_detection.R #cleaning raw data of uas detection
-│   ├── main.R #main analysis
-│   └── figure.R #make figures
+│   ├── clean_logging_data.R   # Cleaning raw bio-logging data
+│   ├── clean_uas_detection.R  # Cleaning raw UAS detection data
+│   ├── main.R                 # Main analysis
+│   └── figure.R               # Figure generation
 │
 ├── output/               # Generated results and figures
-│   ├── ssmn_fit.rds      #
-│   ├── ssmp_fit.rds
-│   ├── sub_sample.rds
-│   ├── full_dens_df.rds
-│   ├── full_ci_df.rds
-│   ├── dist_data.rds
-│   ├── b_data.csv 
-│   ├── cb_data.csv 
-│   ├── df_posterior_summary.csv 
-│   ├── table_s3.csv 
-│   └── uas_data2.csv 
+│   ├── ssmn_fit.rds # fitted result for ssmn
+│   ├── ssmp_fit.rds # fitted result for ssmp
+│   ├── sub_sample.rds # sub-sampled result for creating figures 
+│   ├── full_dens_df.rds # density of sub-sampled result
+│   ├── full_ci_df.rds # ci of sub-sampled result
+│   ├── dist_data.rds # result of Wassestein distance
+│   ├── b_data.csv # temporal .csv for model fitting (presense result in the colony)
+│   ├── uas_data2.csv # temporal .csv for model fitting (count result)
+│   ├── cb_data.csv # temporal .csv for model fitting (combined .csv of bio-logging and uas)
+│   ├── df_posterior_summary.csv # fitted result for ssmn
+│   └── table_s3.csv # estimated values of each parameter
 │
-├── ssm_model/ 
+├── ssm_model/
 │   ├── ssmn.stan
-│   ├── ssmp.stan
+│   └── ssmp.stan
 │
-├── objct_detection/
+├── object_detection/
 │   ├── best.pt
 │   ├── environment.yml
 │   ├── example.png
-│   ├── training_data
-│   └──  training.ipynb
+│   ├── training_data/
+│   └── training.ipynb
 │
 ├── counting_gulls-5FBE.Rproj
 └── README.md
+```
 
 ## Data availability
 
@@ -97,23 +97,23 @@ To install required packages:
 install.packages(c("tidyverse", "geosphere", "stringr", "ggmap",
                    "ggsci","jsonlite","base64enc","janitor","lubridate",
                    "fs","sp","rstan","bayesplot","lme4","cowplot","ggimage",
-                   "osmdata","sf","ggpubr","zoo","viridis","FNN"))
+                   "sf","ggpubr","zoo","viridis","FNN"))
+```
 
-
-```md
 # How to reproduce the analysis
 1.	Clone or download this repository.
 2.	Open R and set the working directory to the root of the repository.
 3.	Run the main script:
+
 
 ```r
 source('clean_logging_data.R')
 source('clean_uas_detection.R')
 source('main.R')
 source('figure.R')
+```
 
 
-```md
 We recommend opening the RStudio project file (`counting_gulls-5FBE.Rproj`) 
 before running the scripts to ensure correct path handling using the `here` package.
 
