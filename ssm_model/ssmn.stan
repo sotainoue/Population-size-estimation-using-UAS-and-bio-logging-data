@@ -70,7 +70,7 @@ model {
     beta ~ normal(beta_prime, 0.05);
     
     for(i in 1:n_session){
-        drone[i] ~ normal(beta*N*p[t_session[i]] + nt[i]*alpha,sigma_obs);
+        drone[i] ~ normal(beta*N*p_pop[t_session[i]] + nt[i]*alpha,sigma_obs);
     }
 }
 
