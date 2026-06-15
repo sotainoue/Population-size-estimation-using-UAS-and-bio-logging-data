@@ -33,14 +33,20 @@ parameters {
     
     real<lower=0> sigma_prime; //standard deviation parameter of linear model for validation
     real<lower=0> sigma_obs; //standard deviation of observation equation for N
+
+    real delta_theta; //fixed logit-scale offset between individual attendance probability and population-level attendance probability
 }
 
 transformed parameters{
-    vector<lower=0, upper=1>[max_T] p;
-    for (t_i in 1:max_T)
-        p[t_i] = inv_logit(theta[t_i]); 
+    vector<lower=0, upper=1>[max_T] p_logger;
+        vector<lower=0, upper=1>[T] p_pop;
+    
+        for (t_i in 1:max_T){
+            p_logger[t_i] = inv_logit(theta[t_i]); Individual attendance probability
+            p_pop[t_i]    = inv_logit(theta[t_i] + delta_theta); Population-level attendance probability
+        }
 }
-
+    
 model {
     theta[1] ~ normal(0, 1);
     theta[2] ~ normal(0, 1);
