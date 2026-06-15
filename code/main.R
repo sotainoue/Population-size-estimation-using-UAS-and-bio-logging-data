@@ -95,7 +95,8 @@ stan_data <- list(max_T = nrow(cb_data),
                   n_val=nrow(test_data),
                   predicted=test_data$n_ind_pre,
                   truth=test_data$n_ind,
-                  nt=n_image_data$nt)
+                  nt=n_image_data$nt,
+                  delta_theta=0)
 
 stopifnot(!any(cb_data$stay[exist_data] > cb_data$total[exist_data]))
 
@@ -111,7 +112,7 @@ ssmp_fit <- sampling(ssmp_model,
                      warmup=warmup, 
                      chains=4,
                      thin=4,
-                     seed=123)
+                     seed=50)
                     
 saveRDS(ssmp_fit,file=here::here('output/ssmp_fit.rds'))
 
@@ -150,7 +151,7 @@ ssmn_fit <- sampling(ssmn_model,
                      iter=iter, 
                      warmup=warmup,
                      thin=4,
-                     seed=123) 
+                     seed=50) 
 saveRDS(ssmn_fit,file=here::here('output/ssmn_fit.rds'))
 
 #post-analysis of ssmn
@@ -171,7 +172,58 @@ write_csv(uas_data2, here::here("output/uas_data2.csv"))
 write_csv(cb_data, here::here("output/cb_data.csv"))
 write_csv(df, here::here("output/df_posterior_summary.csv"))
 
+#sensitivity analysis
+#delta theta ranged -0.8-0.8
+delta_theta_candidates <- c(-0.8, -0.4, 0, 0.4, 0.8)
 
+for(i in 1:length(delta_theta_candidates)){
+    
+    stan_data$theta_dash <- delta_theta_cadidates[i]
+    
+    sens_fit <- sampling(ssmn_model, 
+                     data=stan_data,
+                     chains=4,
+                     iter=iter, 
+                     warmup=warmup,
+                     thin=4,
+                     seed=50) 
+    
+    model_name <- paste0('output/sens_fit_',as.character(i),'.rds')
+    saveRDS(ssmn_fit,file=here::here(model_name))
+}
+
+#post-analysis of sensitivity analysis
+dens_list <- list()
+summary_list <- list()
+
+for(i in 1:length(delta_theta_candidates)){
+    model_name <- here::here('output/sens_fit_', as.character(i), '.rds')
+    sens_res <- readRDS(model_name)
+    N_post <- rstan::extract(sens_res, pars = "N")$N
+
+    df_N <- data.frame(
+        N_es = as.vector(N_post),
+        delta_theta = delta_theta_candidates[i]
+    )
+
+    dens <- density(df_N$N_es)
+    
+    dens_list[[i]] <- data.frame(
+        x = dens$x,
+        y = dens$y,
+        theta_dash = factor(theta_dashs[i])
+    )
+
+    summary_list[[i]] <- data.frame(
+        theta_dash = theta_dashs[i],
+        median = median(df_N$N_es),
+        ci_lower = quantile(df_N$N_es, 0.025),
+        ci_upper = quantile(df_N$N_es, 0.975)
+    )
+}
+
+dens_df <- bind_rows(dens_list)
+summary_df <- bind_rows(summary_list)
 
 
 
