@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this code, data, or trained model weights, please cite the associated preprint."
+title: "Integration of UAS-based spatial surveys and bio-logging tracking enhances precision in population size estimation"
+authors:
+  - family-names: "Inoue"
+    given-names: "Sota"
+date-released: 2026-01-27
+version: "1.0.0"
+repository-code: "https://github.com/sotainoue/Population-size-estimation-using-UAS-and-bio-logging-data"
+
+preferred-citation:
+  type: article
+  title: "Integration of UAS-based spatial surveys and bio-logging tracking enhances precision in population size estimation"
+  authors:
+    - family-names: "Inoue"
+      given-names: "Sota"
+  journal: "bioRxiv"
+  year: 2026
+  doi: "10.64898/2026.01.25.701645"

@@ -145,40 +145,13 @@ ssmn_model <- stan_model(
     file = here::here("ssm_model/ssmn.stan")
 )
 
-ssmn_fit <- sampling(ssmn_model, 
-                     data=stan_data,
-                     chains=4,
-                     iter=iter, 
-                     warmup=warmup,
-                     thin=4,
-                     seed=50) 
-saveRDS(ssmn_fit,file=here::here('output/ssmn_fit.rds'))
-
-#post-analysis of ssmn
-df_N <- data.frame(N_es=rstan::extract(ssmn_fit)$N)
-median_value <- median(df_N$N_es)
-ci_lower <- quantile(df_N$N_es, probs = 0.025)
-ci_upper <- quantile(df_N$N_es, probs = 0.975)
-ci_lower50 <- quantile(df_N$N_es, probs = 0.25)
-ci_upper50 <- quantile(df_N$N_es, probs = 0.75)
-
-print(median_value)
-print(ci_lower)
-print(ci_upper)
-
-#write csv
-write_csv(b_data, here::here("output/b_data.csv"))
-write_csv(uas_data2, here::here("output/uas_data2.csv"))
-write_csv(cb_data, here::here("output/cb_data.csv"))
-write_csv(df, here::here("output/df_posterior_summary.csv"))
-
 #sensitivity analysis
 #delta theta ranged -0.8-0.8
 delta_theta_candidates <- c(-0.8, -0.4, 0, 0.4, 0.8)
 
 for(i in 1:length(delta_theta_candidates)){
     
-    stan_data$theta_dash <- delta_theta_cadidates[i]
+    stan_data$delta_theta <- delta_theta_candidates[i]
     
     sens_fit <- sampling(ssmn_model, 
                      data=stan_data,
@@ -189,7 +162,7 @@ for(i in 1:length(delta_theta_candidates)){
                      seed=50) 
     
     model_name <- paste0('output/sens_fit_',as.character(i),'.rds')
-    saveRDS(ssmn_fit,file=here::here(model_name))
+    saveRDS(sens_fit,file=here::here(model_name))
 }
 
 #post-analysis of sensitivity analysis
@@ -211,11 +184,11 @@ for(i in 1:length(delta_theta_candidates)){
     dens_list[[i]] <- data.frame(
         x = dens$x,
         y = dens$y,
-        theta_dash = factor(theta_dashs[i])
+        delta_theta = factor(delta_theta_candidates[i])
     )
 
     summary_list[[i]] <- data.frame(
-        theta_dash = theta_dashs[i],
+        delta_theta = delta_theta_candidates[i],
         median = median(df_N$N_es),
         ci_lower = quantile(df_N$N_es, 0.025),
         ci_upper = quantile(df_N$N_es, 0.975)
@@ -226,4 +199,8 @@ dens_df <- bind_rows(dens_list)
 summary_df <- bind_rows(summary_list)
 
 
-
+#write csv
+write_csv(b_data, here::here("output/b_data.csv"))
+write_csv(uas_data2, here::here("output/uas_data2.csv"))
+write_csv(cb_data, here::here("output/cb_data.csv"))
+write_csv(df, here::here("output/df_posterior_summary.csv"))

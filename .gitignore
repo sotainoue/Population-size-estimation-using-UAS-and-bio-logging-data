@@ -1,0 +1,16 @@
+.DS_Store
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+
+renv/library/
+renv/staging/
+
+object_detection/.ipynb_checkpoints/
+object_detection/runs/
+

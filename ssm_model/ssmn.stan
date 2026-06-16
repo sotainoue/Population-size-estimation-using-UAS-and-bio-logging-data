@@ -39,11 +39,11 @@ parameters {
 
 transformed parameters{
     vector<lower=0, upper=1>[max_T] p_logger;
-        vector<lower=0, upper=1>[T] p_pop;
+    vector<lower=0, upper=1>[max_T] p_pop;
     
         for (t_i in 1:max_T){
-            p_logger[t_i] = inv_logit(theta[t_i]); Individual attendance probability
-            p_pop[t_i]    = inv_logit(theta[t_i] + delta_theta); Population-level attendance probability
+            p_logger[t_i] = inv_logit(theta[t_i]); //Individual attendance probability
+            p_pop[t_i]    = inv_logit(theta[t_i] + delta_theta); //Population-level attendance probability
         }
 }
     
@@ -57,7 +57,7 @@ model {
     }
     
     for (i in 1:n_obs){
-        y[i] ~ binomial(total_logger[i], p[t[i]]); 
+        y[i] ~ binomial(total_logger[i], p_logger[t[i]]); 
     }
     
     beta_prime ~ normal(1, 0.2);

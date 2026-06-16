@@ -7,7 +7,85 @@ library(sf)
 library(viridis)
 
 here::here()
-base_size <- 12 
+base_size = 10
+# ---- Global defaults (optional) ----
+update_geom_defaults("line",  list(linewidth = 0.4))
+update_geom_defaults("path",  list(linewidth = 0.35))
+update_geom_defaults("point", list(size = 1.2))
+update_geom_defaults("errorbar", list(linewidth = 0.35))
+update_geom_defaults("hline", list(linewidth = 0.35))
+update_geom_defaults("vline", list(linewidth = 0.35))
+
+# ---- Core theme ----
+theme_paper <- function(base_size = 6, base_family = "") {
+    theme_classic(base_size = base_size, base_family = base_family) %+replace%
+        theme(
+            # text
+            plot.title      = element_text(size = base_size + 2, face = "bold", hjust = 0),
+            plot.subtitle   = element_text(size = base_size, hjust = 0),
+            plot.caption    = element_text(size = base_size - 1, hjust = 1),
+            
+            axis.title      = element_text(size = base_size + 1,face='bold'),
+            axis.text       = element_text(size = base_size),
+            axis.ticks      = element_line(linewidth = 0.25),
+            
+            # panel
+            panel.border    = element_rect(fill = NA, colour = "black", linewidth = 0.4),
+            axis.line       = element_blank(),   
+            panel.grid      = element_blank(),
+            
+            # legend
+            legend.title    = element_text(size = base_size),
+            legend.text     = element_text(size = base_size),
+            legend.key      = element_rect(fill = NA, colour = NA),
+            legend.background = element_rect(fill = "transparent", colour = NA),
+            
+            # margins
+            plot.margin     = margin(2, 2, 2, 2,unit='mm')
+        )
+}
+
+# ---- Core theme ----
+theme_paper_sp <- function(base_size = 8, base_family = "") {
+    theme_classic(base_size = base_size, base_family = base_family) %+replace%
+        theme(
+            # text
+            plot.title      = element_text(size = base_size + 2, face = "bold", hjust = 0),
+            plot.subtitle   = element_text(size = base_size, hjust = 0),
+            plot.caption    = element_text(size = base_size - 1, hjust = 1),
+            
+            axis.title      = element_text(size = base_size + 1,face='bold'),
+            axis.text       = element_text(size = base_size),
+            axis.ticks      = element_line(linewidth = 0.25),
+            
+            # panel
+            panel.border    = element_rect(fill = NA, colour = "black", linewidth = 0.4),
+            axis.line       = element_blank(),   
+            panel.grid      = element_blank(),
+            
+            # legend
+            legend.title    = element_text(size = base_size),
+            legend.text     = element_text(size = base_size),
+            legend.key      = element_rect(fill = NA, colour = NA),
+            legend.background = element_rect(fill = "transparent", colour = NA),
+            
+            # margins
+            plot.margin     = margin(2, 2, 2, 2,unit='mm')
+        )
+}
+
+# ---- Common scales (optional helpers) ----
+scale_x_date_paper <- function(...) {
+    scale_x_date(..., expand = expansion(mult = c(0.01, 0.01)))
+}
+scale_y_cont_paper <- function(...) {
+    scale_y_continuous(..., expand = expansion(mult = c(0.02, 0.02)))
+}
+
+# ---- Colors ----
+cols5 <- viridis(5)
+cols6 <- viridis(6)
+
 
 #Figure 2D
 logging_data <- read.csv(here::here('data/derived/logging_data.csv'),header=T)
@@ -151,10 +229,11 @@ print(fig_3d)
 
 
 #Figure 3E
+delta_theta_candidates <- c(-0.8, -0.4, 0, 0.4, 0.8)
 dens_list <- list()
 summary_list <- list()
 
-for(i in seq_along(theta_dashs)){
+for(i in seq_along(delta_theta_candidates)){
 
     model_name <- paste0(here::here('output/sens_fit_'), as.character(i), '.rds')
     sens_res <- readRDS(model_name)
@@ -162,7 +241,7 @@ for(i in seq_along(theta_dashs)){
 
     df_N <- data.frame(
         N_es = as.vector(N_post),
-        theta_dash = theta_dashs[i]
+        theta_dash = delta_theta_candidates[i]
     )
 
     dens <- density(df_N$N_es)
@@ -170,11 +249,11 @@ for(i in seq_along(theta_dashs)){
     dens_list[[i]] <- data.frame(
         x = dens$x,
         y = dens$y,
-        theta_dash = factor(theta_dashs[i])
+        delta_theta = factor(delta_theta_candidates[i])
     )
 
     summary_list[[i]] <- data.frame(
-        theta_dash = theta_dashs[i],
+        delta_theta = delta_theta_candidates[i],
         median = median(df_N$N_es),
         ci_lower = quantile(df_N$N_es, 0.025),
         ci_upper = quantile(df_N$N_es, 0.975)
@@ -186,8 +265,43 @@ summary_df <- bind_rows(summary_list)
 
 summary_zero <- summary_df %>%
 
-    filter(theta_dash == 0)
+    filter(delta_theta == 0)
 
+fig3E <- ggplot(dens_df, aes(x = x, y = y, color = delta_theta)) +
+    annotate(
+        "rect",
+        xmin = summary_zero$ci_lower,
+        xmax = summary_zero$ci_upper,
+        ymin = -Inf,
+        ymax = Inf,
+        alpha = 0.2,
+        fill = "tomato",
+    ) +
+    geom_line(linewidth = 1) +
+    geom_vline(
+        xintercept = summary_zero$median,
+        linetype = "dashed",
+        linewidth = 0.7,
+        color = "black"
+    ) +
+    labs(
+        x = "Estimated N",
+        y = "Density",
+        color = expression(Delta*theta)
+    ) +
+    scale_color_viridis_d() +
+    theme_paper() +
+    theme(
+        legend.position = c(0.95, 0.95),
+        legend.justification = c(1, 1),
+        legend.key.height = unit(0.35, "cm"),
+        legend.key.width  = unit(0.6, "cm"),
+        legend.spacing.y  = unit(0.05, "cm"),
+        legend.margin     = margin(0, 0, 0, 0),
+        legend.box.margin = margin(0, 0, 0, 0)
+    )
+
+print(fig3E)
 
 #Figure 3F
 sub_sample <- readRDS(here::here('output/sub_sample.rds'))

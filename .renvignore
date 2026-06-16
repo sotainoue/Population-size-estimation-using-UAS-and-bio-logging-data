@@ -1,0 +1,5 @@
+object_detection/training_data/
+object_detection/predictions/
+object_detection/.ipynb_checkpoints/
+data/raw/
+output/
