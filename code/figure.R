@@ -151,33 +151,42 @@ print(fig_3d)
 
 
 #Figure 3E
-df_N <- data.frame(N_es=rstan::extract(ssmn_fit)$N)
-dens <- density(df_N$N_es)
-ci_lower <- quantile(df_N$N_es, probs = 0.025)
-ci_upper <- quantile(df_N$N_es, probs = 0.975)
-ci_lower50 <- quantile(df_N$N_es, probs = 0.25)
-ci_upper50 <- quantile(df_N$N_es, probs = 0.75)
+dens_list <- list()
+summary_list <- list()
 
-dens_df <- data.frame(x = dens$x, y = dens$y)
-ci_df <- subset(dens_df, x >= ci_lower & x <= ci_upper)
-ci_df50 <- subset(dens_df, x >= ci_lower50 & x <= ci_upper50)
+for(i in seq_along(theta_dashs)){
 
-# 中央値の計算
-median_value <- median(df_N$N_es)
+    model_name <- paste0(here::here('output/sens_fit_'), as.character(i), '.rds')
+    sens_res <- readRDS(model_name)
+    N_post <- rstan::extract(sens_res, pars = "N")$N
 
-fig_3e <- ggplot() +
-    geom_line(data = dens_df, aes(x = x, y = y), color = "grey") +
-    geom_area(data = ci_df, aes(x = x, y = y), fill = "black", alpha = 0.1) +
-    geom_area(data = ci_df50, aes(x = x, y = y), fill = "black", alpha = 0.6) +   
-    geom_vline(xintercept = median_value, color = "black", linetype = "dashed") +
-    theme_classic()+xlab("Estimated N") + ylab('density') +
-    theme(axis.text = element_text(size=7), 
-          axis.title = element_text(size=9),
-          axis.line = element_line(colour="black",size=0),
-          panel.background = element_rect(fill = "white", colour = "black", size = 1))
+    df_N <- data.frame(
+        N_es = as.vector(N_post),
+        theta_dash = theta_dashs[i]
+    )
 
-print(fig_3e)
+    dens <- density(df_N$N_es)
+    
+    dens_list[[i]] <- data.frame(
+        x = dens$x,
+        y = dens$y,
+        theta_dash = factor(theta_dashs[i])
+    )
 
+    summary_list[[i]] <- data.frame(
+        theta_dash = theta_dashs[i],
+        median = median(df_N$N_es),
+        ci_lower = quantile(df_N$N_es, 0.025),
+        ci_upper = quantile(df_N$N_es, 0.975)
+    )
+}
+
+dens_df <- bind_rows(dens_list)
+summary_df <- bind_rows(summary_list)
+
+summary_zero <- summary_df %>%
+
+    filter(theta_dash == 0)
 
 
 #Figure 3F
