@@ -188,7 +188,7 @@ export RUN_PRIVATE_ORTHO=1
 ## Citation
 
 If you use this code, data, or trained model weights, please cite the associated preprint:
-Inoue, ... (2026). Integration of UAS-based spatial surveys and bio-logging tracking enhances precision in population size estimation. bioRxiv. https://doi.org/10.64898/2026.01.25.701645v1
+Inoue, ... (2026). Integration of UAS-based spatial surveys and bio-logging tracking enhances precision in population size estimation. bioRxiv. https://doi.org/10.64898/2026.01.25.701645
 Citation information is also provided in `CITATION.cff`.
 Please refer to the latest version of the preprint on bioRxiv.
 
