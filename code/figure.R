@@ -267,7 +267,7 @@ summary_zero <- summary_df %>%
 
     filter(delta_theta == 0)
 
-fig3E <- ggplot(dens_df, aes(x = x, y = y, color = delta_theta)) +
+fig_3e <- ggplot(dens_df, aes(x = x, y = y, color = delta_theta)) +
     annotate(
         "rect",
         xmin = summary_zero$ci_lower,
@@ -301,16 +301,47 @@ fig3E <- ggplot(dens_df, aes(x = x, y = y, color = delta_theta)) +
         legend.box.margin = margin(0, 0, 0, 0)
     )
 
-print(fig3E)
+print(fig_3e)
 
 #Figure 3F
-sub_sample <- readRDS(here::here('output/sub_sample.rds'))
 full_dens_df <- readRDS(here::here('output/full_dens_df.rds'))
+full_ci_df <- readRDS(here::here('output/full_ci_df.rds'))
 
+full_dens_df$category <- ifelse(full_dens_df$dataset == 'original', 'observed', 'simulation')
+full_ci_df$category <- ifelse(full_ci_df$dataset == 'original', 'observed', 'simulation')
 
-fig_3e <-
+nums <- regmatches(full_dens_df$sample_size, gregexpr("\\d+", full_dens_df$sample_size))
+full_dens_df$sample_size2 <- sapply(nums, function(x) x[1])
+full_dens_df$sample_size2[is.na(full_dens_df$sample_size2)] <- 'original'
+full_dens_df$id <- sapply(nums, function(x) x[2])
+
+full_dens_df$sample_size_ratio <- ifelse(
+    full_dens_df$sample_size2 == 50, '50%',
+    ifelse(full_dens_df$sample_size2 == 75, '75%',
+           ifelse(full_dens_df$sample_size2 == 90, '90%', 'original'))
+)
+
+full_dens_df$dataset2 <- ifelse(
+    grepl("drone", full_dens_df$dataset), "drone",
+    ifelse(grepl("logger", full_dens_df$dataset), "logger", "original")
+)
+
+lo_ci <- min(subset(full_ci_df, category == 'observed')$x)
+up_ci <- max(subset(full_ci_df, category == 'observed')$x)
+
+tmp_r <- expand.grid(
+    dataset2 = unique(full_dens_df$dataset2),
+    sample_size_ratio = unique(full_dens_df$sample_size_ratio)
+)
+
+tmp_r <- subset(tmp_r, sample_size_ratio != 'original')
+tmp_r <- subset(tmp_r, dataset2 != 'original')
+tmp_r$lo_ci <- lo_ci
+tmp_r$up_ci <- up_ci
+
+fig_3f <-
     ggplot() +
-    geom_rect(data=sub_sample, aes(xmin=lo_ci, xmax=up_ci), ymin=-0.00001, ymax=0.00076, fill='black',alpha=0.3) +
+    geom_rect(data=tmp_r, aes(xmin=lo_ci, xmax=up_ci), ymin=-0.00001, ymax=0.00076, fill='black',alpha=0.3) +
     geom_line(data = subset(full_dens_df,category=='simulation'), 
               aes(x = x, y = y,color=as.factor(id),group=id),alpha=0.8) +
     facet_grid(sample_size_ratio~dataset2,
@@ -330,7 +361,7 @@ fig_3e <-
           legend.position='none',
           legend.box.background = element_rect(fill="white",colour = "black",size=0.4),
           panel.background = element_rect(fill = "white", colour = "black", size = 1))
-print(fig_3e)
+print(fig_3f)
 
 
 #Table S3

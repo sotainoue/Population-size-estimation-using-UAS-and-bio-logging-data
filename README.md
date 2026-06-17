@@ -31,14 +31,11 @@ This repository contains the data and code used to reproduce the analyses and fi
 │   ├── sens_fit_3.rds # fitted result for ssmn with delta theta=0 ; available on Dryad
 │   ├── sens_fit_4.rds # fitted result for ssmn with delta theta=0.4; available on Dryad
 │   ├── sens_fit_5.rds # fitted result for ssmn with delta theta=0.8; available on Dryad
-│   ├── sub_sample.rds # sub-sampled result for creating figures
 │   ├── full_dens_df.rds # density of sub-sampled result
 │   ├── full_ci_df.rds # ci of sub-sampled result
 │   ├── dist_data.rds # result of Wassestein distance
 │   ├── b_data.csv # temporal .csv for model fitting (presense result in the colony)
-│   ├── uas_data2.csv # temporal .csv for model fitting (count result)
 │   ├── cb_data.csv # temporal .csv for model fitting (combined .csv of bio-logging and uas)
-│   ├── df_posterior_summary.csv # fitted result for ssmn; available on Dryad
 │   └── table_s3.csv # estimated values of each parameter
 │
 ├── ssm_model/
