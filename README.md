@@ -197,4 +197,3 @@ Please refer to the latest version of the preprint on bioRxiv.
 The analysis code in this repository, including the R scripts, Stan models, and Python notebooks, is released under the MIT License. See `LICENSE` for details.
 The datasets included in this repository and the large supplementary files deposited on Dryad are released under the license specified in the Dryad record. If not otherwise specified, these data are provided under the Creative Commons Attribution 4.0 International License (CC BY 4.0).
 The trained object detection model weights (`object_detection/best.pt`) are provided for reproducibility of the analyses in the associated manuscript. Please cite the associated paper and this repository when using the model weights, code, or data.
-Large generated output files are deposited on Dryad and will be linked here upon publication.
