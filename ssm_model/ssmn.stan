@@ -38,8 +38,8 @@ parameters {
 }
 
 transformed parameters{
-    vector<lower=0, upper=1>[max_T] p_logger;
-    vector<lower=0, upper=1>[max_T] p_pop;
+    vector<lower=0, upper=1>[max_T] p_logger;//individual attendance probability
+    vector<lower=0, upper=1>[max_T] p_pop;　//population-level attendance probability
     
         for (t_i in 1:max_T){
             p_logger[t_i] = inv_logit(theta[t_i]); //Individual attendance probability

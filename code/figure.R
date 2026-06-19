@@ -218,7 +218,7 @@ df_drone <- left_join(df[t_session,], cb_data[t_session,],by='time_group')
 
 fig_3d <- ggplot(data=df_drone, aes(x=ssmp_p_median,y=n_total)) + 
     geom_point(size=0.8) + stat_smooth(method='lm',se=F) + 
-    ylim(13000,19000) + ylab(expression('a'['obs']*' in each UAV session')) + xlab('predicted p') +
+    ylim(13000,19000) + ylab(expression('C'['obs']*' in each UAV session')) + xlab('predicted p') +
     theme_classic() + 
     theme(axis.text = element_text(size=7), 
           axis.title = element_text(size=9),
